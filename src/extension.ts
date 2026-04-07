@@ -32,29 +32,29 @@ type SendResult = 'ok' | 'token_rejected' | 'error' | 'disabled' | 'no_token';
 function updateStatusBar(result: SendResult, detail?: string): void {
     switch (result) {
         case 'ok':
-            statusBar.text    = '$(check) FocusTrack';
+            statusBar.text = '$(check) FocusTrack';
             statusBar.tooltip = `Connected — last event accepted\n${detail ?? ''}`;
-            statusBar.color   = undefined;
+            statusBar.color = undefined;
             break;
         case 'token_rejected':
-            statusBar.text    = '$(warning) FocusTrack: token rejected';
+            statusBar.text = '$(warning) FocusTrack: token rejected';
             statusBar.tooltip = 'The app rejected the token.\nCheck focustrack.token in VS Code settings matches the token in the FocusTrack app.';
-            statusBar.color   = new vscode.ThemeColor('statusBarItem.warningForeground');
+            statusBar.color = new vscode.ThemeColor('statusBarItem.warningForeground');
             break;
         case 'error':
-            statusBar.text    = '$(error) FocusTrack: not connected';
+            statusBar.text = '$(error) FocusTrack: not connected';
             statusBar.tooltip = `Could not reach FocusTrack app.\n${detail ?? 'Is the app running with the receiver enabled?'}`;
-            statusBar.color   = new vscode.ThemeColor('statusBarItem.errorForeground');
+            statusBar.color = new vscode.ThemeColor('statusBarItem.errorForeground');
             break;
         case 'disabled':
-            statusBar.text    = '$(circle-slash) FocusTrack: disabled';
+            statusBar.text = '$(circle-slash) FocusTrack: disabled';
             statusBar.tooltip = 'Extension is disabled (focustrack.enabled = false).';
-            statusBar.color   = undefined;
+            statusBar.color = undefined;
             break;
         case 'no_token':
-            statusBar.text    = '$(warning) FocusTrack: no token';
+            statusBar.text = '$(warning) FocusTrack: no token';
             statusBar.tooltip = 'focustrack.token is empty. Copy the token from the FocusTrack app.';
-            statusBar.color   = new vscode.ThemeColor('statusBarItem.warningForeground');
+            statusBar.color = new vscode.ThemeColor('statusBarItem.warningForeground');
             break;
     }
 }
@@ -85,10 +85,10 @@ function workspaceHashedId(): string {
 // ── Config helpers ────────────────────────────────────────────────────────────
 
 function getConfig() {
-    const cfg   = vscode.workspace.getConfiguration('focustrack');
+    const cfg = vscode.workspace.getConfiguration('focustrack');
     const enabled = cfg.get<boolean>('enabled', true);
-    const port    = cfg.get<number>('receiverPort', 54321);
-    const token   = cfg.get<string>('token', '');
+    const port = cfg.get<number>('receiverPort', 54321);
+    const token = cfg.get<string>('token', '');
     return { enabled, port, token };
 }
 
@@ -110,11 +110,11 @@ function sendPayload(payload: IdeEventPayload): void {
         return;
     }
 
-    const url  = `http://127.0.0.1:${port}/ide/events`;
+    const url = `http://127.0.0.1:${port}/ide/events`;
     const body = JSON.stringify(payload);
 
     const headers: Record<string, string | number> = {
-        'Content-Type':   'application/json',
+        'Content-Type': 'application/json',
         'Content-Length': Buffer.byteLength(body),
     };
 
@@ -127,8 +127,8 @@ function sendPayload(payload: IdeEventPayload): void {
     const options: http.RequestOptions = {
         hostname: '127.0.0.1',
         port,
-        path:     '/ide/events',
-        method:   'POST',
+        path: '/ide/events',
+        method: 'POST',
         headers,
     };
 
@@ -182,15 +182,15 @@ function sendDocEvent(
     if (doc.uri.scheme !== 'file') return;
 
     const payload: IdeEventPayload = {
-        type:      'ide',
+        type: 'ide',
         action,
         timestamp: new Date().toISOString(),
-        metadata:  {
-            workspaceName:  workspaceName(),
-            workspaceId:    workspaceHashedId(),
-            languageId:     doc.languageId,
-            fileExtension:  path.extname(doc.fileName),
-            source:         'vscode-extension',
+        metadata: {
+            workspaceName: workspaceName(),
+            workspaceId: workspaceHashedId(),
+            languageId: doc.languageId,
+            fileExtension: path.extname(doc.fileName),
+            source: 'vscode-extension',
             ...extra,
         },
     };
@@ -206,13 +206,13 @@ function sendWorkspaceActive(): void {
     if (name === 'unknown') return;
 
     const payload: IdeEventPayload = {
-        type:      'ide',
-        action:    'workspace_active',
+        type: 'ide',
+        action: 'workspace_active',
         timestamp: new Date().toISOString(),
-        metadata:  {
+        metadata: {
             workspaceName: name,
-            workspaceId:   workspaceHashedId(),
-            source:        'vscode-extension',
+            workspaceId: workspaceHashedId(),
+            source: 'vscode-extension',
         },
     };
 
@@ -226,7 +226,7 @@ function onDocumentChanged(e: vscode.TextDocumentChangeEvent): void {
     if (e.contentChanges.length === 0) return;
 
     pendingEditCount += e.contentChanges.length;
-    pendingEditDoc    = e.document;
+    pendingEditDoc = e.document;
 
     if (editFlushTimer) clearTimeout(editFlushTimer);
     editFlushTimer = setTimeout(flushEditBurst, EDIT_DEBOUNCE_MS);
@@ -240,8 +240,8 @@ function flushEditBurst(): void {
     });
 
     pendingEditCount = 0;
-    pendingEditDoc   = null;
-    editFlushTimer   = undefined;
+    pendingEditDoc = null;
+    editFlushTimer = undefined;
 }
 
 // ── Test connection command ───────────────────────────────────────────────────
@@ -268,13 +268,13 @@ function runTestConnection(): void {
 
     const name = workspaceName();
     const payload: IdeEventPayload = {
-        type:      'ide',
-        action:    'workspace_active',
+        type: 'ide',
+        action: 'workspace_active',
         timestamp: new Date().toISOString(),
-        metadata:  {
+        metadata: {
             workspaceName: name !== 'unknown' ? name : 'test',
-            workspaceId:   workspaceHashedId() || 'test',
-            source:        'vscode-extension-test',
+            workspaceId: workspaceHashedId() || 'test',
+            source: 'vscode-extension-test',
         },
     };
 
@@ -290,7 +290,7 @@ export function activate(context: vscode.ExtensionContext): void {
 
     statusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
     statusBar.command = 'focustrack.showOutput';
-    statusBar.text    = '$(sync~spin) FocusTrack';
+    statusBar.text = '$(sync~spin) FocusTrack';
     statusBar.tooltip = 'FocusTrack — click to show log';
     statusBar.show();
     context.subscriptions.push(statusBar);
