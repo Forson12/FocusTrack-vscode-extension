@@ -1,0 +1,62 @@
+{
+  "name": "focustrack",
+  "displayName": "FocusTrack",
+  "description": "Sends high-level coding telemetry to the FocusTrack desktop app (local-only, no cloud).",
+  "version": "0.1.0",
+  "publisher": "focustrack",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "focustrack.showOutput",
+        "title": "FocusTrack: Show Output Log"
+      },
+      {
+        "command": "focustrack.testConnection",
+        "title": "FocusTrack: Test Connection to App"
+      }
+    ],
+    "configuration": {
+      "title": "FocusTrack",
+      "properties": {
+        "focustrack.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable the FocusTrack extension. When disabled, no telemetry is sent."
+        },
+        "focustrack.receiverPort": {
+          "type": "number",
+          "default": 54321,
+          "minimum": 1024,
+          "maximum": 65535,
+          "description": "Port number of the FocusTrack app's local receiver. Must match the port configured in the FocusTrack app."
+        },
+        "focustrack.token": {
+          "type": "string",
+          "default": "",
+          "description": "Local extension token from the FocusTrack app (Settings → VS Code Integration → Security). Leave blank if token auth is not required."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.85.0",
+    "typescript": "^5.3.0"
+  }
+}
