@@ -4,4 +4,3 @@ src/**
 node_modules/**
 tsconfig.json
 .gitignore
-out/test/**

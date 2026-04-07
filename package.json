@@ -1,4 +1,4 @@
-﻿{
+{
   "name": "focustrack",
   "displayName": "FocusTrack",
   "description": "Sends high-level coding telemetry to the FocusTrack desktop app (local-only, no cloud).",
