@@ -133,8 +133,11 @@ const EDIT_DEBOUNCE_MS = 2000;
 
 // ── Workspace identity ────────────────────────────────────────────────────────
 
-function workspaceId(uri: string): string {
-    return crypto.createHash('sha256').update(uri).digest('hex').slice(0, 16);
+function workspaceId(fsPath: string): string {
+    // Hash the local filesystem path (lowercased, trimmed) to match the server-side
+    // EventNormalizer.HashRepoIdentifier algorithm, so IDE and git events for the
+    // same repo produce identical RepoHash values and are grouped into one session.
+    return crypto.createHash('sha256').update(fsPath.toLowerCase().trimEnd()).digest('hex').slice(0, 16);
 }
 
 function workspaceName(): string {
@@ -144,7 +147,7 @@ function workspaceName(): string {
 
 function workspaceHashedId(): string {
     const folder = vscode.workspace.workspaceFolders?.[0];
-    return folder ? workspaceId(folder.uri.toString()) : '';
+    return folder ? workspaceId(folder.uri.fsPath) : '';
 }
 
 // Returns 'true' / 'false' indicating whether doc lives inside any workspace folder.
